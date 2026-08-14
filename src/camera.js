@@ -29,16 +29,6 @@ export class CameraController {
     this.controls.panSpeed = 0.8;
     this.controls.zoomSpeed = 0.9;
     this.controls.screenSpacePanning = false;
-
-    // Left button is reserved for build-tool interaction (see interaction.js).
-    // Middle-drag pans, right-drag orbits — keeps building and camera from
-    // fighting over the same button.
-    this.controls.mouseButtons = {
-      LEFT: null,
-      MIDDLE: THREE.MOUSE.PAN,
-      RIGHT: THREE.MOUSE.ROTATE,
-    };
-
     this.controls.update();
 
     this.keys = { w: false, a: false, s: false, d: false };

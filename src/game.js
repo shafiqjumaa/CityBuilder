@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { CameraController } from './camera.js';
-import { InteractionManager } from './interaction.js';
 import { MapManager } from './map.js';
 import { UIManager } from './ui.js';
 import { ToolManager } from './tools.js';
@@ -68,7 +67,6 @@ export class Game {
     this.toolManager = new ToolManager(this);
     this.uiManager = new UIManager(this);
     this.uiManager.init();
-    this.interactionManager = new InteractionManager(this);
 
     this._bindGlobalEvents();
     this._animate();
