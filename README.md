@@ -57,10 +57,30 @@ as requested, ready for Phase 2 (roads).
 
 ## Controls
 
-| Action              | Input                        |
-|---------------------|-------------------------------|
-| Orbit camera        | Left-click drag                |
-| Pan camera          | Right-click drag / WASD / arrows |
-| Zoom                | Mouse wheel                    |
-| Select tool         | Click a toolbar icon           |
-| Toggle debug overlay| F3                              |
+| Action                | Input                              |
+|------------------------|-------------------------------------|
+| Orbit camera            | Right-click drag                     |
+| Pan camera              | Middle-click drag / WASD / arrows    |
+| Zoom                    | Mouse wheel                          |
+| Select a tool           | Click a toolbar icon                 |
+| Place a road            | Select Roads tool → click start → click end |
+| Cancel road placement   | Esc                                  |
+| Delete a road tile      | Select Demolish tool → click the tile |
+| Toggle debug overlay    | F3                                    |
+
+Left-click is reserved for tool actions (building/selecting/demolishing),
+which is why camera orbit/pan moved to right/middle mouse button — this
+avoids fighting between "I'm placing a road" and "I'm rotating the camera."
+
+## What's implemented (Phase 2 — Roads)
+
+- Roads tool: click a start cell, move the mouse for a live straight-line
+  preview (teal = valid & affordable, red = blocked or too expensive),
+  click again to build
+- Cost shown next to the cursor while previewing; deducted from money on
+  build; blocked if funds are insufficient
+- Grid-based snapping (roads always align to cells) and free connections
+  to existing road tiles (no extra cost, no overlap)
+- Blocked over water/zones/other obstacles, and off the map edge
+- Demolish tool removes a single road tile per click
+- Esc cancels an in-progress placement
