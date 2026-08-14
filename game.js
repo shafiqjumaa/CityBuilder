@@ -6,10 +6,7 @@ import { UIManager } from "./ui.js";
 /**
  * Game
  * Top-level orchestrator. Owns the renderer, scene and render loop, and
- * wires together the other managers. Later phases will add RoadManager,
- * ZoningManager, BuildingManager, CitizenManager, TrafficManager,
- * EconomyManager, UtilityManager and SaveManager here — each responsible
- * for exactly one system, per the project architecture.
+ * wires together the other managers.
  */
 export class Game {
   constructor() {
@@ -19,7 +16,7 @@ export class Game {
     this.activeTool = "SELECT";
     this.timeSpeed = 1; // 0 = paused, 1 = normal, 4 = fast
 
-    // --- Simulation state (placeholders — real systems arrive in later phases) ---
+    // --- Simulation state ---
     this.economy = {
       money: 125000,
       population: 0,
@@ -84,16 +81,17 @@ export class Game {
     this.sunLight.shadow.camera.near = 10;
     this.sunLight.shadow.camera.far = 500;
     this.sunLight.shadow.bias = -0.0012;
+    
+    // إضافة الشمس وهدفها إلى المشهد بشكل صحيح لتجنب أخطاء التحديث
     this.scene.add(this.sunLight);
     this.scene.add(this.sunLight.target);
-
+    
     this.ambient = new THREE.AmbientLight(0xffffff, 0.18);
     this.scene.add(this.ambient);
   }
 
   setActiveTool(tool) {
     this.activeTool = tool;
-    // Later phases: swap cursor, show tool-specific preview/cost overlays.
   }
 
   setTimeSpeed(speed) {
@@ -102,6 +100,11 @@ export class Game {
 
   _onResize() {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    // تحديث الكاميرا عند تغيير حجم النافذة
+    if (this.cameraRig && this.cameraRig.camera) {
+      this.cameraRig.camera.aspect = window.innerWidth / window.innerHeight;
+      this.cameraRig.camera.updateProjectionMatrix();
+    }
   }
 
   _tickCalendar(dt) {
@@ -123,17 +126,28 @@ export class Game {
   }
 
   start() {
+    // إخفاء شاشة التحميل بشكل قاطع عند استدعاء دالة البدء
     this.ui.hideLoadingOverlay();
+    const overlay = document.getElementById("loading-overlay");
+    if (overlay) {
+      overlay.style.display = "none";
+    }
+    
     this.renderer.setAnimationLoop((t) => this._loop(t));
   }
 
   _loop() {
     const dt = Math.min(this.clock.getDelta(), 0.1);
 
-    this.cameraRig.update(dt);
+    if (this.cameraRig && typeof this.cameraRig.update === "function") {
+      this.cameraRig.update(dt);
+    }
+    
     this._tickCalendar(dt);
 
-    this.renderer.render(this.scene, this.cameraRig.camera);
+    if (this.cameraRig && this.cameraRig.camera) {
+      this.renderer.render(this.scene, this.cameraRig.camera);
+    }
 
     this._updateDebug(dt);
   }
@@ -152,12 +166,14 @@ export class Game {
         objects++;
         if (obj.isMesh || obj.isInstancedMesh) {
           const geo = obj.geometry;
-          const idx = geo.index;
-          const triCount = idx
-            ? idx.count / 3
-            : geo.attributes.position.count / 3;
-          const instances = obj.isInstancedMesh ? obj.count : 1;
-          triangles += triCount * instances;
+          if (geo) {
+            const idx = geo.index;
+            const triCount = idx
+              ? idx.count / 3
+              : (geo.attributes && geo.attributes.position ? geo.attributes.position.count / 3 : 0);
+            const instances = obj.isInstancedMesh ? obj.count : 1;
+            triangles += triCount * instances;
+          }
         }
       });
 
