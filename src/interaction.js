@@ -58,10 +58,15 @@ export class InteractionManager {
   _onDown(e) {
     if (e.button !== 0) return; // left click drives tools; middle/right drive the camera
     const point = this._groundPointFromEvent(e);
-    if (!point) return;
+    if (!point) {
+      console.warn('[Urbanova] click did not hit the ground plane');
+      return;
+    }
     const cell = this.game.mapManager.worldToCell(point);
 
     const tool = this.game.toolManager.current;
+    console.log('[Urbanova] click', { tool, cell });
+
     if (tool === TOOLS.ROAD) {
       this.game.roadManager.handleClick(cell);
     } else if (tool === TOOLS.DEMOLISH) {
