@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { MAP_SIZE, CELL_SIZE } from './game.js';
+import { MAP_SIZE, CELL_SIZE } from './config.js';
 
 const HALF = (MAP_SIZE * CELL_SIZE) / 2;
 

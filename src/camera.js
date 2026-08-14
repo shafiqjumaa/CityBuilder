@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { MAP_SIZE, CELL_SIZE } from './game.js';
+import { MAP_SIZE, CELL_SIZE } from './config.js';
 
 const HALF_MAP = (MAP_SIZE * CELL_SIZE) / 2;
 

@@ -12,10 +12,11 @@ import { EconomyManager } from './economy.js';
 import { UtilityManager } from './utilities.js';
 import { ServiceManager } from './services.js';
 import { SaveManager } from './saveSystem.js';
+import { MAP_SIZE, CELL_SIZE } from './config.js';
 
-// Map size in world units (grid cells). Kept central so every manager agrees.
-export const MAP_SIZE = 128; // cells
-export const CELL_SIZE = 4; // world units per cell
+// Re-exported here too so any file that still does
+// `import { MAP_SIZE } from './game.js'` keeps working.
+export { MAP_SIZE, CELL_SIZE };
 
 export class Game {
   constructor() {
