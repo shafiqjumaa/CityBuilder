@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>City Builder 3D</title>
+<link rel="stylesheet" href="style.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+  <canvas id="game-canvas"></canvas>
+
+  <!-- ================= TOP HUD ================= -->
+  <div id="top-hud" class="glass-panel">
+    <div class="stat" id="stat-money">
+      <span class="stat-icon">💰</span>
+      <span class="stat-value" id="money-value">$0</span>
+    </div>
+    <div class="stat" id="stat-population">
+      <span class="stat-icon">👥</span>
+      <span class="stat-value" id="population-value">0</span>
+    </div>
+    <div class="stat" id="stat-happiness">
+      <span class="stat-icon">😊</span>
+      <span class="stat-value" id="happiness-value">0%</span>
+    </div>
+    <div class="stat" id="stat-income">
+      <span class="stat-icon">📈</span>
+      <span class="stat-value" id="income-value">+$0</span>
+    </div>
+  </div>
+
+  <!-- ================= CLOCK / TIME CONTROLS ================= -->
+  <div id="time-hud" class="glass-panel">
+    <div class="time-readout">
+      <span id="time-day">Day 1</span>
+      <span class="time-sep">·</span>
+      <span id="time-month">Month 1</span>
+      <span class="time-sep">·</span>
+      <span id="time-year">Year 1</span>
+    </div>
+    <div class="time-controls">
+      <button id="btn-pause" class="time-btn" title="Pause">⏸</button>
+      <button id="btn-play" class="time-btn active" title="Play">▶</button>
+      <button id="btn-fast" class="time-btn" title="Fast Forward">▶▶</button>
+    </div>
+  </div>
+
+  <!-- ================= BOTTOM TOOLBAR ================= -->
+  <div id="toolbar" class="glass-panel">
+    <button class="tool-btn active" data-tool="SELECT">
+      <span class="tool-icon">🖱️</span><span class="tool-label">Select</span>
+    </button>
+    <button class="tool-btn" data-tool="ROAD">
+      <span class="tool-icon">🛣️</span><span class="tool-label">Roads</span>
+    </button>
+    <button class="tool-btn" data-tool="ZONE">
+      <span class="tool-icon">🏘️</span><span class="tool-label">Zones</span>
+    </button>
+    <button class="tool-btn" data-tool="BUILDING">
+      <span class="tool-icon">🏗️</span><span class="tool-label">Buildings</span>
+    </button>
+    <button class="tool-btn" data-tool="ELECTRICITY">
+      <span class="tool-icon">⚡</span><span class="tool-label">Electricity</span>
+    </button>
+    <button class="tool-btn" data-tool="WATER">
+      <span class="tool-icon">💧</span><span class="tool-label">Water</span>
+    </button>
+    <button class="tool-btn" data-tool="SERVICES">
+      <span class="tool-icon">🏥</span><span class="tool-label">Services</span>
+    </button>
+    <button class="tool-btn" data-tool="TRANSPORT">
+      <span class="tool-icon">🚌</span><span class="tool-label">Transport</span>
+    </button>
+    <button class="tool-btn danger" data-tool="DEMOLISH">
+      <span class="tool-icon">💥</span><span class="tool-label">Demolish</span>
+    </button>
+  </div>
+
+  <!-- ================= LOADING OVERLAY ================= -->
+  <div id="loading-overlay">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Building your city...</div>
+    </div>
+  </div>
+
+  <!-- ================= DEBUG PANEL (F3) ================= -->
+  <div id="debug-panel" class="glass-panel hidden">
+    <div>FPS: <span id="dbg-fps">0</span></div>
+    <div>Objects: <span id="dbg-objects">0</span></div>
+    <div>Triangles: <span id="dbg-triangles">0</span></div>
+    <div>Sim Time: <span id="dbg-simtime">0</span></div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
