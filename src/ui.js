@@ -1,4 +1,10 @@
 import { TOOLS } from './tools.js';
+import { ZONE_TYPES } from './zoning.js';
+
+// Which tools show extra sub-options, and what those options are.
+const SUBTOOL_OPTIONS = {
+  ZONE: Object.values(ZONE_TYPES).map((z) => ({ id: z.id, label: z.label, icon: z.icon })),
+};
 
 export class UIManager {
   constructor(game) {
@@ -15,6 +21,9 @@ export class UIManager {
     this.refreshTopbar();
     this.refreshClockButtons();
     this._drawMinimapStatic();
+
+    this.game.toolManager.onChange((tool) => this._renderSubtoolbar(tool));
+    this._renderSubtoolbar(this.game.toolManager.current);
   }
 
   // ------------------------------------------------------------ toolbar
@@ -30,6 +39,33 @@ export class UIManager {
     });
     // SELECT starts active
     document.querySelector('.tool-btn[data-tool="SELECT"]')?.classList.add('selected');
+  }
+
+  // ---------------------------------------------------------- subtoolbar
+  _renderSubtoolbar(tool) {
+    const bar = document.getElementById('subtoolbar');
+    const options = SUBTOOL_OPTIONS[tool];
+    if (!options) {
+      bar.classList.add('hidden');
+      bar.innerHTML = '';
+      return;
+    }
+
+    bar.innerHTML = '';
+    options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'tool-btn' + (i === 0 ? ' selected' : '');
+      btn.dataset.subtool = opt.id;
+      btn.title = opt.label;
+      btn.innerHTML = `${opt.icon}<span>${opt.label}</span>`;
+      btn.addEventListener('click', () => {
+        this.game.toolManager.setSubTool(opt.id);
+        bar.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+      bar.appendChild(btn);
+    });
+    bar.classList.remove('hidden');
   }
 
   // -------------------------------------------------------------- clock

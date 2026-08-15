@@ -28,8 +28,13 @@ export class ToolManager {
   setTool(tool) {
     if (!TOOLS[tool]) return;
     this.current = tool;
-    this.subTool = null;
+    // Auto-pick a sensible default subtool so the player can act immediately.
+    this.subTool = tool === TOOLS.ZONE ? 'RESIDENTIAL' : null;
     this.listeners.forEach((fn) => fn(tool));
+  }
+
+  setSubTool(subTool) {
+    this.subTool = subTool;
   }
 
   onChange(fn) {

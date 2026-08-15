@@ -5,9 +5,13 @@ import { TOOLS } from './tools.js';
  * Bridges mouse input to the active build tool.
  *
  * Mouse buttons are split so building never fights with camera control:
- *  - LEFT   -> tool actions (place/select/demolish)
+ *  - LEFT   -> tool actions (place/select/demolish/zone-paint)
  *  - MIDDLE -> camera pan   (see camera.js)
  *  - RIGHT  -> camera orbit (see camera.js)
+ *
+ * ROAD works as click-then-click (two discrete points).
+ * ZONE works as click-drag-release (rectangle paint), since a single
+ * click wouldn't let the player select an area.
  */
 export class InteractionManager {
   constructor(game) {
@@ -16,6 +20,7 @@ export class InteractionManager {
     this.mouseNDC = new THREE.Vector2();
     this.groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
     this.hoverCell = null;
+    this.isPaintingZone = false;
 
     this._bind();
   }
@@ -24,6 +29,7 @@ export class InteractionManager {
     const dom = this.game.renderer.domElement;
     dom.addEventListener('mousemove', (e) => this._onMove(e));
     dom.addEventListener('mousedown', (e) => this._onDown(e));
+    window.addEventListener('mouseup', (e) => this._onUp(e));
     dom.addEventListener('contextmenu', (e) => e.preventDefault());
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') this._cancelCurrentTool();
@@ -51,6 +57,8 @@ export class InteractionManager {
     const tool = this.game.toolManager.current;
     if (tool === TOOLS.ROAD) {
       this.game.roadManager.updatePreview(cell);
+    } else if (tool === TOOLS.ZONE && this.isPaintingZone) {
+      this.game.zoneManager.updatePaintPreview(cell);
     }
     this._updateCostTooltip(e, tool);
   }
@@ -63,21 +71,38 @@ export class InteractionManager {
       return;
     }
     const cell = this.game.mapManager.worldToCell(point);
-
     const tool = this.game.toolManager.current;
-    console.log('[Urbanova] click', { tool, cell });
 
     if (tool === TOOLS.ROAD) {
       this.game.roadManager.handleClick(cell);
+    } else if (tool === TOOLS.ZONE) {
+      this.isPaintingZone = true;
+      this.game.zoneManager.startPaint(cell, this.game.toolManager.subTool);
     } else if (tool === TOOLS.DEMOLISH) {
-      const removed = this.game.roadManager.demolishAt(cell);
-      if (!removed) this.game.uiManager?.notify('Nothing to demolish there.', 'warn');
+      this._demolishAt(cell);
     }
-    // SELECT / other tools: building/zone picking arrives in later phases.
+    // SELECT / other tools: building picking arrives in a later phase.
+  }
+
+  _onUp(e) {
+    if (e.button !== 0) return;
+    if (this.isPaintingZone) {
+      this.isPaintingZone = false;
+      this.game.zoneManager.commitPaint();
+    }
+  }
+
+  _demolishAt(cell) {
+    const removedZone = this.game.zoneManager.demolishAt(cell);
+    if (removedZone) return;
+    const removedRoad = this.game.roadManager.demolishAt(cell);
+    if (!removedRoad) this.game.uiManager?.notify('Nothing to demolish there.', 'warn');
   }
 
   _cancelCurrentTool() {
     this.game.roadManager?.cancelPreview();
+    this.game.zoneManager?.cancelPaint();
+    this.isPaintingZone = false;
     document.getElementById('cost-tooltip').classList.add('hidden');
   }
 
@@ -95,3 +120,4 @@ export class InteractionManager {
     }
   }
 }
+
