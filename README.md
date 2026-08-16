@@ -72,15 +72,18 @@ Left-click is reserved for tool actions (building/selecting/demolishing),
 which is why camera orbit/pan moved to right/middle mouse button — this
 avoids fighting between "I'm placing a road" and "I'm rotating the camera."
 
-## What's implemented (Phase 2 — Roads)
+## What's implemented (Phase 4 + partial Phase 6 — Buildings, Traffic, Pedestrians)
 
-- Roads tool: click a start cell, move the mouse for a live straight-line
-  preview (teal = valid & affordable, red = blocked or too expensive),
-  click again to build
-- Cost shown next to the cursor while previewing; deducted from money on
-  build; blocked if funds are insufficient
-- Grid-based snapping (roads always align to cells) and free connections
-  to existing road tiles (no extra cost, no overlap)
-- Blocked over water/zones/other obstacles, and off the map edge
-- Demolish tool removes a single road tile per click
-- Esc cancels an in-progress placement
+- **15 building types** (5 residential, 5 commercial, 5 industrial), each
+  with a distinct footprint size (1×1 up to 3×2 cells), height, and
+  procedurally-modeled low-poly shape — houses, shops with awnings,
+  glass towers, factories with chimneys, an industrial complex with silos
+- **Auto-growth**: zoned cells that touch a road slowly develop into
+  buildings each in-game day (a handful of attempts per day, so the city
+  fills in gradually instead of all at once)
+- **Vehicle traffic**: cars follow the road network, count auto-scales
+  with the number of buildings in the city
+- **Pedestrian NPCs**: small figures walk the sidewalk edge of roads,
+  count auto-scales with population
+- Population is now derived live from residential building capacity
+- Click a building with the Select tool to see its info panel

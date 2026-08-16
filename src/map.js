@@ -47,6 +47,16 @@ export class MapManager {
     return { gx, gz };
   }
 
+  /** World-space center of a multi-cell footprint starting at (gx,gz), size w x d cells. */
+  footprintCenter(gx, gz, w, d) {
+    const corner = this.cellToWorld(gx, gz);
+    return new THREE.Vector3(
+      corner.x + ((w - 1) * CELL_SIZE) / 2,
+      0,
+      corner.z + ((d - 1) * CELL_SIZE) / 2
+    );
+  }
+
   isInBounds(gx, gz) {
     return gx >= 0 && gx < MAP_SIZE && gz >= 0 && gz < MAP_SIZE;
   }

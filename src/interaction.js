@@ -80,8 +80,25 @@ export class InteractionManager {
       this.game.zoneManager.startPaint(cell, this.game.toolManager.subTool);
     } else if (tool === TOOLS.DEMOLISH) {
       this._demolishAt(cell);
+    } else if (tool === TOOLS.SELECT) {
+      this._selectAt(cell);
     }
-    // SELECT / other tools: building picking arrives in a later phase.
+  }
+
+  _selectAt(cell) {
+    const b = this.game.buildingManager?.getBuildingAt(cell.gx, cell.gz);
+    if (!b) {
+      document.getElementById('info-panel').classList.add('hidden');
+      return;
+    }
+    this.game.uiManager?.showInfoPanel(b.type.replace(/_/g, ' '), [
+      ['Zone', b.zoneType],
+      ['Level', b.level],
+      ['Capacity', b.capacity || '—'],
+      ['Jobs', b.jobs || '—'],
+      ['Happiness', b.happiness + '%'],
+      ['Footprint', `${b.footprint[0]}×${b.footprint[1]}`],
+    ]);
   }
 
   _onUp(e) {

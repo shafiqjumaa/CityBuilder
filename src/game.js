@@ -165,7 +165,10 @@ export class Game {
       this.time.month = 1;
       this.time.year += 1;
     }
-    // Monthly tick: economy/utilities/citizens resolve on day 1
+    // Daily: buildings grow gradually on eligible zoned+road-adjacent cells
+    this.buildingManager?.dailyGrowthTick();
+
+    // Monthly tick: economy/citizens resolve on day 1
     if (this.time.day === 1) {
       this.economyManager?.monthlyTick();
       this.citizenManager?.monthlyTick();
@@ -180,6 +183,7 @@ export class Game {
     this._updateTime(delta);
     this.cameraController.update(delta);
     this.trafficManager?.update(delta);
+    this.citizenManager?.update(delta);
     this.uiManager?.updateDebug(delta);
 
     this.renderer.render(this.scene, this.camera);
