@@ -1,0 +1,2 @@
+# Optional local-only secrets. Do not commit a populated .dev.vars file.
+# This app currently accepts a per-session API key in its Settings screen.
